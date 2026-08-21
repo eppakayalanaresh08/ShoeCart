@@ -20,6 +20,7 @@ interface AppContextType {
   role: Role;
   setRole: (role: Role) => void;
   login: (email: string, role: Role, name?: string) => Promise<void>;
+  updateCurrentUser: (updates: Partial<UserAccount>) => Promise<void>;
   logout: () => Promise<void>;
   completeOnboarding: () => Promise<void>;
   activeTab: string;
@@ -153,6 +154,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     } catch (e) {
       console.error('Failed to remove user', e);
     }
+  };
+
+  const updateCurrentUser = async (updates: Partial<UserAccount>) => {
+    if (!currentUser) {
+      return;
+    }
+
+    const updatedUser: UserAccount = {
+      ...currentUser,
+      ...updates,
+    };
+
+    setCurrentUser(updatedUser);
+    await saveState(STORAGE_KEYS.USER, updatedUser);
   };
 
   const completeOnboarding = async () => {
@@ -350,6 +365,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         role,
         setRole,
         login,
+        updateCurrentUser,
         logout,
         completeOnboarding,
         activeTab,

@@ -1,13 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
-import { useApp } from '../../../context/AppContext';
-import { Input } from '../../../components/common/Input';
+import React, { useEffect, useState } from 'react';
+import {
+  Alert,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {
+  CameraOptions,
+  ImageLibraryOptions,
+  launchCamera,
+  launchImageLibrary,
+} from 'react-native-image-picker';
 import { Button } from '../../../components/common/Button';
+import { Input } from '../../../components/common/Input';
 import { SizeSelector } from '../../../components/shoe/SizeSelector';
+import { useApp } from '../../../context/AppContext';
+import { themeColors } from '../../../theme/colors';
 import { StockStatus } from '../../../types';
+
+const IMAGE_PRESETS = [
+  'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=800&q=80',
+];
+
+const sharedMediaOptions = {
+  mediaType: 'photo' as const,
+  selectionLimit: 1 as const,
+  quality: 0.9,
+  maxWidth: 1600,
+  maxHeight: 1600,
+};
+
+const cameraOptions: CameraOptions = {
+  ...sharedMediaOptions,
+  cameraType: 'back',
+  saveToPhotos: false,
+};
+
+const galleryOptions: ImageLibraryOptions = {
+  ...sharedMediaOptions,
+};
 
 export const AddEditShoeScreen: React.FC = () => {
   const { editingShoe, addShoe, updateShoe, setActiveTab, setEditingShoe } = useApp();
+  const theme = themeColors.admin;
 
   const [brand, setBrand] = useState('');
   const [name, setName] = useState('');
@@ -18,14 +59,7 @@ export const AddEditShoeScreen: React.FC = () => {
   const [selectedSizes, setSelectedSizes] = useState<number[]>([7, 8, 9, 10, 11, 12]);
   const [stockStatus, setStockStatus] = useState<StockStatus>('In Stock');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Preset sample shoe images for quick selection
-  const imagePresets = [
-    'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=800&q=80',
-  ];
+  const [activePicker, setActivePicker] = useState<'camera' | 'gallery' | null>(null);
 
   useEffect(() => {
     if (editingShoe) {
@@ -42,7 +76,7 @@ export const AddEditShoeScreen: React.FC = () => {
       setName('');
       setPrice('');
       setDescription('');
-      setImageUrl(imagePresets[0]);
+      setImageUrl(IMAGE_PRESETS[0]);
       setCategory('Running');
       setSelectedSizes([7, 8, 9, 10, 11, 12]);
       setStockStatus('In Stock');
@@ -56,6 +90,61 @@ export const AddEditShoeScreen: React.FC = () => {
       }
     } else {
       setSelectedSizes([...selectedSizes, size].sort((a, b) => a - b));
+    }
+  };
+
+  const setSelectedAsset = (uri?: string) => {
+    if (!uri) {
+      Alert.alert('Image Missing', 'No image was returned. Please try again.');
+      return;
+    }
+
+    setImageUrl(uri);
+  };
+
+  const handlePickFromCamera = async () => {
+    setActivePicker('camera');
+    try {
+      const result = await launchCamera(cameraOptions);
+
+      if (result.didCancel) {
+        return;
+      }
+
+      if (result.errorCode || result.errorMessage) {
+        Alert.alert('Camera Error', result.errorMessage || 'Unable to open the camera right now.');
+        return;
+      }
+
+      setSelectedAsset(result.assets?.[0]?.uri);
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Camera Error', 'Something went wrong while opening the camera.');
+    } finally {
+      setActivePicker(null);
+    }
+  };
+
+  const handlePickFromGallery = async () => {
+    setActivePicker('gallery');
+    try {
+      const result = await launchImageLibrary(galleryOptions);
+
+      if (result.didCancel) {
+        return;
+      }
+
+      if (result.errorCode || result.errorMessage) {
+        Alert.alert('Gallery Error', result.errorMessage || 'Unable to open the gallery right now.');
+        return;
+      }
+
+      setSelectedAsset(result.assets?.[0]?.uri);
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Gallery Error', 'Something went wrong while opening the gallery.');
+    } finally {
+      setActivePicker(null);
     }
   };
 
@@ -80,7 +169,7 @@ export const AddEditShoeScreen: React.FC = () => {
           name,
           price: numPrice,
           description: description || 'Premium athletic performance and casual shoe.',
-          imageUrl: imageUrl || imagePresets[0],
+          imageUrl: imageUrl || IMAGE_PRESETS[0],
           category,
           availableSizes: selectedSizes,
           stockStatus,
@@ -91,7 +180,7 @@ export const AddEditShoeScreen: React.FC = () => {
           name,
           price: numPrice,
           description: description || 'Premium athletic performance and casual shoe.',
-          imageUrl: imageUrl || imagePresets[0],
+          imageUrl: imageUrl || IMAGE_PRESETS[0],
           category,
           availableSizes: selectedSizes,
           stockStatus,
@@ -100,10 +189,11 @@ export const AddEditShoeScreen: React.FC = () => {
           reviewCount: 1,
         });
       }
+
       setEditingShoe(null);
       setActiveTab('shoes');
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
@@ -111,29 +201,58 @@ export const AddEditShoeScreen: React.FC = () => {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.screenTitle}>
-        {editingShoe ? 'Edit Shoe' : 'Add / Edit Shoe'}
-      </Text>
+      <Text style={styles.screenTitle}>{editingShoe ? 'Edit Shoe' : 'Add / Edit Shoe'}</Text>
 
-      {/* Image Preview & Preset Selection */}
       <View style={styles.imageUploadCard}>
         {imageUrl ? (
           <Image source={{ uri: imageUrl }} style={styles.previewImage} resizeMode="cover" />
         ) : (
           <View style={styles.uploadPlaceholder}>
-            <Text style={styles.cloudIcon}>☁️</Text>
             <Text style={styles.uploadText}>Upload Shoe Image</Text>
-            <Text style={styles.uploadSub}>PNG, JPG up to 5MB</Text>
+            <Text style={styles.uploadSub}>
+              Use your real camera or gallery to add a product photo.
+            </Text>
           </View>
         )}
 
-        {/* Preset Selectors */}
-        <Text style={styles.presetLabel}>Select Preset Image or enter Image URL below:</Text>
+        <View style={styles.mediaActionRow}>
+          <Button
+            title="Open Camera"
+            onPress={handlePickFromCamera}
+            variant="outline"
+            isLoading={activePicker === 'camera'}
+            disabled={activePicker !== null}
+            style={styles.mediaActionButton}
+          />
+          <Button
+            title="Open Gallery"
+            onPress={handlePickFromGallery}
+            variant="secondary"
+            isLoading={activePicker === 'gallery'}
+            disabled={activePicker !== null}
+            style={styles.mediaActionButton}
+          />
+        </View>
+
+        {!!imageUrl && (
+          <TouchableOpacity
+            style={styles.removeImageButton}
+            onPress={() => setImageUrl('')}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.removeImageText}>Remove selected image</Text>
+          </TouchableOpacity>
+        )}
+
+        <Text style={styles.presetLabel}>Quick preset images:</Text>
         <View style={styles.presetRow}>
-          {imagePresets.map((url, idx) => (
+          {IMAGE_PRESETS.map((url, idx) => (
             <TouchableOpacity
               key={idx}
-              style={[styles.presetThumb, imageUrl === url && styles.selectedPresetThumb]}
+              style={[
+                styles.presetThumb,
+                imageUrl === url && { borderColor: theme.primaryLight },
+              ]}
               onPress={() => setImageUrl(url)}
             >
               <Image source={{ uri: url }} style={styles.presetImg} />
@@ -142,15 +261,13 @@ export const AddEditShoeScreen: React.FC = () => {
         </View>
       </View>
 
-      {/* Image URL Direct Input */}
       <Input
-        label="Image URL"
+        label="Image URL (optional backup)"
         placeholder="https://example.com/shoe.jpg"
         value={imageUrl}
         onChangeText={setImageUrl}
       />
 
-      {/* Brand */}
       <Input
         label="Brand"
         placeholder="e.g. Nike, Adidas, Puma"
@@ -158,7 +275,6 @@ export const AddEditShoeScreen: React.FC = () => {
         onChangeText={setBrand}
       />
 
-      {/* Shoe Name */}
       <Input
         label="Shoe Name"
         placeholder="e.g. Air Jordan 1"
@@ -166,7 +282,6 @@ export const AddEditShoeScreen: React.FC = () => {
         onChangeText={setName}
       />
 
-      {/* Price */}
       <Input
         label="Price ($)"
         placeholder="e.g. 159.99"
@@ -175,7 +290,6 @@ export const AddEditShoeScreen: React.FC = () => {
         keyboardType="numeric"
       />
 
-      {/* Description */}
       <Input
         label="Description"
         placeholder="e.g. The Air Jordan 1 combines iconic style with premium comfort..."
@@ -185,7 +299,6 @@ export const AddEditShoeScreen: React.FC = () => {
         numberOfLines={3}
       />
 
-      {/* Available Sizes Multi-Select */}
       <SizeSelector
         availableSizes={[7, 8, 9, 10, 11, 12]}
         selectedSize={null}
@@ -195,7 +308,6 @@ export const AddEditShoeScreen: React.FC = () => {
         onToggleSizeMulti={handleToggleSize}
       />
 
-      {/* Stock Status Picker */}
       <View style={styles.fieldBlock}>
         <Text style={styles.fieldLabel}>Stock Status</Text>
         <View style={styles.statusOptionsRow}>
@@ -221,7 +333,6 @@ export const AddEditShoeScreen: React.FC = () => {
         </View>
       </View>
 
-      {/* Save Shoe Button */}
       <Button
         title={editingShoe ? 'Update Shoe' : 'Save Shoe'}
         onPress={handleSave}
@@ -261,22 +372,43 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   uploadPlaceholder: {
+    width: '100%',
+    minHeight: 180,
+    borderRadius: 12,
+    backgroundColor: '#F8FAFC',
     alignItems: 'center',
-    paddingVertical: 20,
-  },
-  cloudIcon: {
-    fontSize: 36,
-    marginBottom: 8,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 12,
   },
   uploadText: {
     fontSize: 15,
     fontWeight: '700',
     color: '#1E1B4B',
+    textAlign: 'center',
   },
   uploadSub: {
     fontSize: 12,
     color: '#94A3B8',
-    marginTop: 2,
+    marginTop: 6,
+    textAlign: 'center',
+  },
+  mediaActionRow: {
+    flexDirection: 'row',
+    gap: 10,
+    width: '100%',
+    marginBottom: 12,
+  },
+  mediaActionButton: {
+    flex: 1,
+  },
+  removeImageButton: {
+    marginBottom: 14,
+  },
+  removeImageText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#B91C1C',
   },
   presetLabel: {
     fontSize: 12,
@@ -288,6 +420,8 @@ const styles = StyleSheet.create({
   presetRow: {
     flexDirection: 'row',
     gap: 8,
+    width: '100%',
+    justifyContent: 'space-between',
   },
   presetThumb: {
     width: 50,
@@ -296,9 +430,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 2,
     borderColor: 'transparent',
-  },
-  selectedPresetThumb: {
-    borderColor: '#7C3AED',
   },
   presetImg: {
     width: '100%',

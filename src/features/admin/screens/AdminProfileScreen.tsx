@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Alert } from 'react-native';
 import { useApp } from '../../../context/AppContext';
 import { Icon } from '../../../components/common/Icon';
 import { themeColors } from '../../../theme/colors';
+
+const ADMIN_ACCENT_OPTIONS = [
+  { key: 'violet', primary: '#5B2E8C', light: '#7C3AED', soft: '#F5F3FF' },
+  { key: 'blue', primary: '#1D4ED8', light: '#3B82F6', soft: '#DBEAFE' },
+  { key: 'emerald', primary: '#047857', light: '#10B981', soft: '#D1FAE5' },
+  { key: 'rose', primary: '#BE123C', light: '#F43F5E', soft: '#FFE4E6' },
+] as const;
 
 export const AdminProfileScreen: React.FC = () => {
   const {
@@ -17,6 +24,12 @@ export const AdminProfileScreen: React.FC = () => {
   } = useApp();
 
   const theme = themeColors.admin;
+  const [selectedAccentKey, setSelectedAccentKey] = useState<(typeof ADMIN_ACCENT_OPTIONS)[number]['key']>('violet');
+
+  const selectedAccent = useMemo(
+    () => ADMIN_ACCENT_OPTIONS.find((option) => option.key === selectedAccentKey) || ADMIN_ACCENT_OPTIONS[0],
+    [selectedAccentKey]
+  );
 
   const handleResetData = () => {
     Alert.alert(
@@ -50,9 +63,10 @@ export const AdminProfileScreen: React.FC = () => {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={[styles.hero, { backgroundColor: theme.primary }]}>
+      <View style={[styles.hero, { backgroundColor: selectedAccent.primary }]}>
         <View style={styles.heroGlowOne} />
         <View style={styles.heroGlowTwo} />
+        <View style={[styles.heroGradientBand, { backgroundColor: selectedAccent.light }]} />
         <View style={styles.heroTopRow}>
           <View style={styles.identityRow}>
             <Image
@@ -70,7 +84,7 @@ export const AdminProfileScreen: React.FC = () => {
             </View>
           </View>
 
-          <View style={styles.roleBadge}>
+          <View style={[styles.roleBadge, { backgroundColor: selectedAccent.primary }]}>
             <Icon name="shield-check" color="#FFFFFF" size={18} />
           </View>
         </View>
@@ -78,19 +92,40 @@ export const AdminProfileScreen: React.FC = () => {
         <View style={styles.heroMetaRow}>
           <View style={styles.metaChip}>
             <Icon name="dashboard" color="#FFFFFF" size={14} />
-            <Text style={styles.metaChipText}>Admin Control Center</Text>
+            <Text style={styles.metaChipText}>Admin Control</Text>
           </View>
           <View style={styles.metaChipSoft}>
-            <Text style={styles.metaChipSoftText}>Signed in</Text>
+            <Text style={styles.metaChipSoftText}>Tap a color to update the logo</Text>
           </View>
         </View>
+
+        {/* <View style={styles.colorRow}>
+          {ADMIN_ACCENT_OPTIONS.map((option) => {
+            const isActive = option.key === selectedAccentKey;
+
+            return (
+              <TouchableOpacity
+                key={option.key}
+                style={[
+                  styles.colorOption,
+                  { backgroundColor: option.primary },
+                  isActive && styles.colorOptionActive,
+                ]}
+                onPress={() => setSelectedAccentKey(option.key)}
+                activeOpacity={0.85}
+              >
+                {isActive ? <View style={styles.colorOptionInner} /> : null}
+              </TouchableOpacity>
+            );
+          })}
+        </View> */}
       </View>
 
       <View style={styles.statsGrid}>
         {stats.map((item) => (
           <View key={item.label} style={styles.statCard}>
-            <View style={styles.statIconWrap}>
-              <Icon name={item.icon} color={theme.primary} size={18} />
+            <View style={[styles.statIconWrap, { backgroundColor: selectedAccent.soft }]}>
+              <Icon name={item.icon} color={selectedAccent.primary} size={18} />
             </View>
             <Text style={styles.statValue}>{item.value}</Text>
             <Text style={styles.statLabel}>{item.label}</Text>
@@ -111,8 +146,8 @@ export const AdminProfileScreen: React.FC = () => {
             activeOpacity={0.8}
           >
             <View style={styles.menuLeft}>
-              <View style={styles.menuIconWrap}>
-                <Icon name={action.icon} color={theme.primary} size={18} />
+              <View style={[styles.menuIconWrap, { backgroundColor: selectedAccent.soft }]}>
+                <Icon name={action.icon} color={selectedAccent.primary} size={18} />
               </View>
               <Text style={styles.menuText}>{action.label}</Text>
             </View>
@@ -128,8 +163,8 @@ export const AdminProfileScreen: React.FC = () => {
       <View style={styles.menuCard}>
         <TouchableOpacity style={styles.menuItem} onPress={() => setRole('user')} activeOpacity={0.8}>
           <View style={styles.menuLeft}>
-            <View style={styles.menuIconWrap}>
-              <Icon name="user" color={theme.primary} size={18} />
+            <View style={[styles.menuIconWrap, { backgroundColor: selectedAccent.soft }]}>
+              <Icon name="user" color={selectedAccent.primary} size={18} />
             </View>
             <Text style={styles.menuText}>Switch to Customer Mode</Text>
           </View>
@@ -172,6 +207,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     overflow: 'hidden',
     position: 'relative',
+  },
+  heroGradientBand: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 6,
+    opacity: 0.9,
   },
   heroGlowOne: {
     position: 'absolute',
@@ -219,7 +262,7 @@ const styles = StyleSheet.create({
   },
   name: {
     color: '#FFFFFF',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '900',
   },
   email: {
@@ -233,7 +276,13 @@ const styles = StyleSheet.create({
     borderRadius: 21,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.18)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.28)',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.14,
+    shadowRadius: 16,
+    elevation: 4,
   },
   heroMetaRow: {
     flexDirection: 'row',
@@ -265,6 +314,30 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 11,
     fontWeight: '700',
+  },
+  colorRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 16,
+  },
+  colorOption: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.45)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  colorOptionActive: {
+    transform: [{ scale: 1.08 }],
+    borderColor: '#FFFFFF',
+  },
+  colorOptionInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#FFFFFF',
   },
   statsGrid: {
     flexDirection: 'row',

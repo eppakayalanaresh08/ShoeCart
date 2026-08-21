@@ -34,6 +34,17 @@ export const LoginScreen: React.FC = () => {
     password: 'user123',
     name: 'Sneakerhead Customer',
   };
+  const isAdmin = selectedRole === 'admin';
+  const heroBackground = isAdmin ? '#F6F0FF' : '#FFF1F2';
+  const heroBorder = isAdmin ? '#E9D5FF' : '#FFE4E8';
+  const accentLargeColor = isAdmin ? '#C4B5FD' : '#FDBAC8';
+  const accentSmallColor = isAdmin ? '#DDD6FE' : '#FECACA';
+  const backButtonTextColor = isAdmin ? theme.primaryDark : '#BE123C';
+  const backButtonBorder = isAdmin ? '#E9D5FF' : '#FFE4E8';
+  const guestLinkColor = isAdmin ? theme.primary : '#BE123C';
+  const roleDescription = isAdmin
+    ? 'Sign in to manage products, orders, and customers.'
+    : 'Sign in to continue your shopping journey.';
 
   const handleRoleTabChange = (role: Role) => {
     setSelectedRoleTab(role);
@@ -91,31 +102,59 @@ export const LoginScreen: React.FC = () => {
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.brandHero}>
-        <View style={styles.heroAccentCircleLarge} />
-        <View style={styles.heroAccentCircleSmall} />
+      <View
+        style={[
+          styles.brandHero,
+          {
+            backgroundColor: heroBackground,
+            borderColor: heroBorder,
+          },
+        ]}
+      >
+        <View
+          style={[
+            styles.heroAccentCircleLarge,
+            { backgroundColor: accentLargeColor },
+          ]}
+        />
+        <View
+          style={[
+            styles.heroAccentCircleSmall,
+            { backgroundColor: accentSmallColor },
+          ]}
+        />
 
-        <View style={styles.brandTopRow}>
-          <TouchableOpacity
-            style={styles.backToWelcomeButton}
-            onPress={handleBackToWelcome}
-            activeOpacity={0.8}
-          >
-            <Icon name="arrow-left" size={16} color="#BE123C" />
-            <Text style={styles.backToWelcomeText}>Back</Text>
-          </TouchableOpacity>
-
-          <View style={styles.logoBadge}>
-            <Icon name="footprints" color="#FFFFFF" size={30} />
-          </View>
-        </View>
+        <TouchableOpacity
+          style={[
+            styles.backToWelcomeButton,
+            { borderColor: backButtonBorder },
+          ]}
+          onPress={handleBackToWelcome}
+          activeOpacity={0.8}
+        >
+          <Icon name="arrow-left" size={16} color={backButtonTextColor} />
+          <Text style={[styles.backToWelcomeText, { color: backButtonTextColor }]}>Back</Text>
+        </TouchableOpacity>
 
         <View style={styles.brandCenter}>
-          <View style={styles.brandChip}>
-            <Text style={styles.brandChipText}>SHOECART</Text>
+          <View
+            style={[
+              styles.logoBadge,
+              {
+                backgroundColor: theme.primary,
+                shadowColor: theme.primary,
+              },
+            ]}
+          >
+            <Icon name="footprints" color="#FFFFFF" size={30} />
           </View>
-          <Text style={styles.brandTitle}>Login</Text>
-          <Text style={styles.brandSubtitle}>Sign in to continue</Text>
+          <View style={[styles.rolePill, { backgroundColor: theme.primaryBg }]}>
+            <Text style={[styles.rolePillText, { color: theme.primary }]}>
+              {isAdmin ? 'Admin Access' : 'Customer Access'}
+            </Text>
+          </View>
+          <Text style={styles.brandTitle}>ShoeCart</Text>
+          <Text style={styles.brandSubtitle}>{roleDescription}</Text>
         </View>
       </View>
 
@@ -127,14 +166,15 @@ export const LoginScreen: React.FC = () => {
       )}
 
       <View style={styles.authCard}>
-        <Text style={styles.authTitle}>Welcome back</Text>
-        <Text style={styles.authSubtitle}>
-          Customer styling stays bright and clean here. Choose your role and continue.
-        </Text>
+        <Text style={styles.authTitle}>Sign in</Text>
+        <Text style={styles.authSubtitle}>Choose your role and continue.</Text>
 
         <View style={styles.roleTabsRow}>
           <TouchableOpacity
-            style={[styles.roleTabBtn, selectedRole === 'user' && styles.roleTabBtnActiveUser]}
+            style={[
+              styles.roleTabBtn,
+              selectedRole === 'user' && styles.roleTabBtnActiveUser,
+            ]}
             onPress={() => handleRoleTabChange('user')}
             activeOpacity={0.8}
           >
@@ -211,7 +251,7 @@ export const LoginScreen: React.FC = () => {
               style={[styles.passwordInput, { color: theme.textDark }]}
               value={password}
               onChangeText={setPassword}
-              placeholder="••••••••"
+              placeholder="Password"
               placeholderTextColor={theme.textMuted}
               secureTextEntry={!showPassword}
             />
@@ -240,7 +280,9 @@ export const LoginScreen: React.FC = () => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.guestLink} onPress={handleExploreGuest}>
-          <Text style={styles.guestLinkText}>Continue to Storefront as Guest</Text>
+          <Text style={[styles.guestLinkText, { color: guestLinkColor }]}>
+            Continue to Storefront as Guest
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -253,18 +295,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF7F5',
   },
   contentContainer: {
-    padding: 20,
+    paddingHorizontal: 20,
     paddingTop: 24,
     paddingBottom: 40,
   },
   brandHero: {
-    backgroundColor: '#FFF1F2',
     borderRadius: 28,
-    padding: 22,
+    paddingHorizontal: 22,
+    paddingTop: 18,
+    paddingBottom: 28,
     borderWidth: 1,
-    borderColor: '#FFE4E8',
     overflow: 'hidden',
-    marginBottom: 22,
+    marginBottom: 18,
   },
   heroAccentCircleLarge: {
     position: 'absolute',
@@ -273,7 +315,6 @@ const styles = StyleSheet.create({
     width: 160,
     height: 160,
     borderRadius: 80,
-    backgroundColor: '#FDBAC8',
     opacity: 0.55,
   },
   heroAccentCircleSmall: {
@@ -283,16 +324,10 @@ const styles = StyleSheet.create({
     width: 110,
     height: 110,
     borderRadius: 55,
-    backgroundColor: '#FECACA',
     opacity: 0.65,
   },
-  brandTopRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 18,
-  },
   backToWelcomeButton: {
+    alignSelf: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
@@ -300,55 +335,55 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: '#FFE4E8',
   },
   backToWelcomeText: {
     marginLeft: 6,
-    color: '#BE123C',
     fontSize: 12,
     fontWeight: '800',
   },
   logoBadge: {
-    width: 62,
-    height: 62,
-    borderRadius: 18,
+    width: 74,
+    height: 74,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FF3B5C',
-    transform: [{ rotate: '-8deg' }],
+    marginBottom: 18,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.2,
+    shadowRadius: 18,
+    elevation: 6,
   },
-  brandChip: {
-    alignSelf: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 999,
+  rolePill: {
     paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderWidth: 1,
-    borderColor: '#FFE4E8',
+    paddingVertical: 6,
+    borderRadius: 999,
+    marginBottom: 12,
+  },
+  rolePillText: {
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.3,
+    textTransform: 'uppercase',
   },
   brandCenter: {
     alignItems: 'center',
-    paddingTop: 8,
-    paddingBottom: 4,
-  },
-  brandChipText: {
-    color: '#E11D48',
-    fontSize: 11,
-    fontWeight: '800',
-    letterSpacing: 0.5,
+    justifyContent: 'center',
+    paddingTop: 10,
   },
   brandTitle: {
-    marginTop: 14,
-    fontSize: 30,
-    lineHeight: 34,
+    fontSize: 32,
+    lineHeight: 36,
     color: '#111827',
     fontWeight: '900',
+    letterSpacing: 0.4,
   },
   brandSubtitle: {
-    marginTop: 10,
+    marginTop: 8,
     fontSize: 14,
-    lineHeight: 18,
+    lineHeight: 22,
     color: '#6B7280',
+    textAlign: 'center',
+    maxWidth: 240,
   },
   successBox: {
     flexDirection: 'row',
@@ -372,21 +407,23 @@ const styles = StyleSheet.create({
   authCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 24,
-    padding: 20,
+    padding: 22,
     borderWidth: 1,
     borderColor: '#FCE7F3',
   },
   authTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: '900',
     color: '#111827',
+    textAlign: 'center',
   },
   authSubtitle: {
     marginTop: 6,
     fontSize: 13,
-    lineHeight: 20,
+    lineHeight: 19,
     color: '#6B7280',
-    marginBottom: 18,
+    marginBottom: 20,
+    textAlign: 'center',
   },
   roleTabsRow: {
     flexDirection: 'row',
@@ -487,7 +524,6 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   guestLinkText: {
-    color: '#BE123C',
     fontSize: 12,
     fontWeight: '800',
   },

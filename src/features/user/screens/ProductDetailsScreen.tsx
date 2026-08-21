@@ -168,6 +168,8 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   heartButton: {
+    // paddingTop: -1000,
+    marginRight: 16,
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -182,7 +184,7 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: -6,
+    marginTop: -60,
   },
   heroImage: {
     width: '90%',

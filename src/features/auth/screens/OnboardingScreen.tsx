@@ -1,5 +1,10 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import {
+  Dimensions,
+  ImageBackground,
+  ImageSourcePropType,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   Text,
@@ -7,42 +12,54 @@ import {
   View,
 } from 'react-native';
 import { useApp } from '../../../context/AppContext';
-import { Icon, IconName } from '../../../components/common/Icon';
 
-const HIGHLIGHTS: Array<{
-  icon: IconName;
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+const ONBOARDING_SCREENS: Array<{
+  image: ImageSourcePropType;
   title: string;
-  description: string;
-  accent: string;
-  bg: string;
 }> = [
   {
-    icon: 'footprints',
-    title: 'Curated sneaker drops',
-    description: 'Browse standout pairs, trend-forward collections, and new arrivals in one clean storefront.',
-    accent: '#FF3B5C',
-    bg: '#FFF1F2',
+    image: require('../../../assets/onboarding1.png'),
+    title: 'Step Into Style',
   },
   {
-    icon: 'shopping-bag',
-    title: 'Faster checkout flow',
-    description: 'Save time with a simpler cart, clear order tracking, and a smoother path from browse to buy.',
-    accent: '#0F766E',
-    bg: '#ECFEFF',
+    image: require('../../../assets/onboarding2.png'),
+    title: 'Find Your Perfect Pair',
   },
   {
-    icon: 'dashboard',
-    title: 'Smart admin overview',
-    description: 'Store owners get cleaner analytics, better sales visibility, and easier order management.',
-    accent: '#7C3AED',
-    bg: '#F5F3FF',
+    image: require('../../../assets/onboarding3.png'),
+    title: 'Your Style Your Way',
   },
 ];
 
 export const OnboardingScreen: React.FC = () => {
   const { completeOnboarding, setRole, setActiveTab } = useApp();
+  const scrollRef = useRef<ScrollView | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const handleGetStarted = async () => {
+  const handleScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const nextIndex = Math.round(offsetX / SCREEN_WIDTH);
+    setActiveIndex(nextIndex);
+  };
+
+  const handleNext = async () => {
+    if (activeIndex < ONBOARDING_SCREENS.length - 1) {
+      const nextPage = activeIndex + 1;
+      scrollRef.current?.scrollTo({
+        x: nextPage * SCREEN_WIDTH,
+        animated: true,
+      });
+      setActiveIndex(nextPage);
+      return;
+    }
+
+    await completeOnboarding();
+  };
+
+  const handleSkip = async () => {
     await completeOnboarding();
   };
 
@@ -53,276 +70,168 @@ export const OnboardingScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.heroCard}>
-        <View style={styles.heroGlowLarge} />
-        <View style={styles.heroGlowSmall} />
+    <View style={styles.container}>
+      <ScrollView
+        ref={scrollRef}
+        horizontal
+        pagingEnabled
+        decelerationRate="fast"
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={handleScrollEnd}
+      >
+        {ONBOARDING_SCREENS.map((screen, index) => (
+          <View key={screen.title} style={styles.page}>
+            <ImageBackground source={screen.image} resizeMode="cover" style={styles.pageBackground}>
+              <View style={styles.topSection}>
+                <View style={styles.topRow}>
+                  <View style={styles.titleBlock}>
+                    <View style={styles.progressBadge}>
+                      <Text style={styles.pageCount}>
+                        {String(index + 1).padStart(2, '0')} / {String(ONBOARDING_SCREENS.length).padStart(2, '0')}
+                      </Text>
+                    </View>
+                    <Text style={styles.pageTitle}>{screen.title}</Text>
+                  </View>
 
-        <View style={styles.heroTopRow}>
-          <View style={styles.betaPill}>
-            <Text style={styles.betaPillText}>NEW EXPERIENCE</Text>
-          </View>
-          <View style={styles.logoBadge}>
-            <Icon name="footprints" size={34} color="#FFFFFF" />
-          </View>
-        </View>
+                  <TouchableOpacity onPress={handleSkip} activeOpacity={0.8} style={styles.skipButton}>
+                    <Text style={styles.skipText}>Skip</Text>
+                  </TouchableOpacity>
+                </View>
 
-        <Text style={styles.heroTitle}>Step Into the New ShoeCart</Text>
-        <Text style={styles.heroSubtitle}>
-          Discover premium sneakers, cleaner browsing, and a storefront that feels faster and easier from the first tap.
-        </Text>
+                <View style={styles.dotsRow}>
+                  {ONBOARDING_SCREENS.map((item, dotIndex) => (
+                    <View
+                      key={item.title}
+                      style={[styles.dot, dotIndex === activeIndex && styles.dotActive]}
+                    />
+                  ))}
+                </View>
+              </View>
 
-        <View style={styles.heroStatsRow}>
-          <View style={styles.heroStatCard}>
-            <Text style={styles.heroStatValue}>200+</Text>
-            <Text style={styles.heroStatLabel}>styles to explore</Text>
-          </View>
-          <View style={styles.heroStatCard}>
-            <Text style={styles.heroStatValue}>24/7</Text>
-            <Text style={styles.heroStatLabel}>order tracking</Text>
-          </View>
-        </View>
-      </View>
+              <View style={styles.bottomOverlay}>
+                <TouchableOpacity
+                  style={styles.primaryButton}
+                  onPress={handleNext}
+                  activeOpacity={0.88}
+                >
+                  <Text style={styles.primaryButtonText}>
+                    {activeIndex === ONBOARDING_SCREENS.length - 1 ? 'Get Started' : 'Next'}
+                  </Text>
+                </TouchableOpacity>
 
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionEyebrow}>WHY YOU'LL LIKE IT</Text>
-        <Text style={styles.sectionTitle}>Built to feel sharper on day one</Text>
-      </View>
-
-      <View style={styles.featureList}>
-        {HIGHLIGHTS.map((item) => (
-          <View key={item.title} style={styles.featureCard}>
-            <View style={[styles.featureIconWrap, { backgroundColor: item.bg }]}>
-              <Icon name={item.icon} size={22} color={item.accent} />
-            </View>
-            <View style={styles.featureContent}>
-              <Text style={styles.featureTitle}>{item.title}</Text>
-              <Text style={styles.featureDescription}>{item.description}</Text>
-            </View>
+                <TouchableOpacity
+                  style={styles.secondaryLink}
+                  onPress={handleContinueAsGuest}
+                  activeOpacity={0.82}
+                >
+                  <Text style={styles.secondaryLinkText}>Continue as Guest</Text>
+                </TouchableOpacity>
+              </View>
+            </ImageBackground>
           </View>
         ))}
-      </View>
-
-      <View style={styles.ctaCard}>
-        <Text style={styles.ctaTitle}>Choose how you want to enter</Text>
-        <Text style={styles.ctaText}>
-          Start with your account for the full experience, or jump into the storefront as a guest.
-        </Text>
-
-        <TouchableOpacity
-          style={styles.primaryButton}
-          onPress={handleGetStarted}
-          activeOpacity={0.88}
-        >
-          <Text style={styles.primaryButtonText}>Start</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.secondaryButton}
-          onPress={handleContinueAsGuest}
-          activeOpacity={0.82}
-        >
-          <Text style={styles.secondaryButtonText}>Continue as Guest</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF8F4',
+    backgroundColor: '#FFF8F6',
   },
-  contentContainer: {
-    padding: 20,
-    paddingTop: 28,
-    paddingBottom: 36,
+  page: {
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
   },
-  heroCard: {
-    backgroundColor: '#111827',
-    borderRadius: 30,
-    padding: 24,
-    overflow: 'hidden',
-  },
-  heroGlowLarge: {
-    position: 'absolute',
-    top: -40,
-    right: -30,
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: '#FF5F7E',
-    opacity: 0.22,
-  },
-  heroGlowSmall: {
-    position: 'absolute',
-    bottom: -20,
-    left: -10,
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: '#F59E0B',
-    opacity: 0.18,
-  },
-  heroTopRow: {
-    flexDirection: 'row',
+  pageBackground: {
+    height: '100%',
+    width: '100%',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
   },
-  betaPill: {
-    backgroundColor: 'rgba(255,255,255,0.14)',
+  topSection: {
+    paddingTop: 25,
+    paddingHorizontal: 32,
+  },
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  titleBlock: {
+    flex: 1,
+    paddingRight: 16,
+  },
+  progressBadge: {
+    alignSelf: 'flex-start',
     paddingHorizontal: 12,
-    paddingVertical: 7,
+    paddingVertical: 6,
     borderRadius: 999,
+    backgroundColor: 'rgba(255, 255, 255, 0.82)',
   },
-  betaPillText: {
-    color: '#FDE68A',
-    fontSize: 11,
-    fontWeight: '800',
-    letterSpacing: 0.6,
+  skipButton: {
+    alignSelf: 'flex-start',
+    paddingTop: 2,
   },
-  logoBadge: {
-    width: 62,
-    height: 62,
-    borderRadius: 20,
-    backgroundColor: '#FF3B5C',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transform: [{ rotate: '-8deg' }],
-  },
-  heroTitle: {
-    fontSize: 34,
-    lineHeight: 38,
-    color: '#FFFFFF',
-    fontWeight: '900',
-    maxWidth: 270,
-  },
-  heroSubtitle: {
-    marginTop: 14,
-    fontSize: 14,
-    lineHeight: 22,
-    color: '#D1D5DB',
-    maxWidth: 320,
-  },
-  heroStatsRow: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 24,
-  },
-  heroStatCard: {
-    flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    borderRadius: 18,
-    padding: 14,
-  },
-  heroStatValue: {
-    color: '#FFFFFF',
-    fontSize: 22,
-    fontWeight: '900',
-  },
-  heroStatLabel: {
-    marginTop: 4,
-    color: '#D1D5DB',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  sectionHeader: {
-    marginTop: 24,
-    marginBottom: 14,
-  },
-  sectionEyebrow: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#E11D48',
-    letterSpacing: 0.8,
-  },
-  sectionTitle: {
-    marginTop: 6,
-    fontSize: 24,
-    lineHeight: 30,
-    color: '#111827',
-    fontWeight: '900',
-  },
-  featureList: {
-    gap: 12,
-  },
-  featureCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 22,
-    padding: 16,
-    flexDirection: 'row',
-    gap: 14,
-    borderWidth: 1,
-    borderColor: '#F3E8E2',
-  },
-  featureIconWrap: {
-    width: 50,
-    height: 50,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  featureContent: {
-    flex: 1,
-  },
-  featureTitle: {
+  skipText: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#111827',
+    color: '#475569',
   },
-  featureDescription: {
-    marginTop: 6,
-    fontSize: 13,
-    lineHeight: 20,
-    color: '#6B7280',
+  bottomOverlay: {
+    paddingHorizontal: 32,
+    paddingBottom: 44,
   },
-  ctaCard: {
-    marginTop: 24,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 26,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: '#F3E8E2',
+  pageCount: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#E11D48',
+    letterSpacing: 1,
   },
-  ctaTitle: {
-    fontSize: 21,
+  pageTitle: {
+    marginTop: 8,
+    fontSize: 25,
+    lineHeight: 36,
     fontWeight: '900',
     color: '#111827',
   },
-  ctaText: {
-    marginTop: 8,
-    fontSize: 13,
-    lineHeight: 20,
-    color: '#6B7280',
+  dotsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 18,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#F9A8B8',
+    opacity: 0.45,
+  },
+  dotActive: {
+    width: 22,
+    backgroundColor: '#FF3B5C',
+    opacity: 1,
   },
   primaryButton: {
-    marginTop: 18,
     backgroundColor: '#FF3B5C',
-    borderRadius: 16,
-    paddingVertical: 15,
+    borderRadius: 22,
+    paddingVertical: 18,
     alignItems: 'center',
   },
   primaryButtonText: {
     color: '#FFFFFF',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '900',
   },
-  secondaryButton: {
-    marginTop: 12,
-    borderRadius: 16,
-    paddingVertical: 15,
+  secondaryLink: {
+    marginTop: 14,
     alignItems: 'center',
-    backgroundColor: '#FFF1F2',
+    paddingVertical: 8,
   },
-  secondaryButtonText: {
+  secondaryLinkText: {
     color: '#BE123C',
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '800',
   },
 });

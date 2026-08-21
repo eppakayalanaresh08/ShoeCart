@@ -29,6 +29,7 @@ import {
   Trophy,
   User,
   Users,
+  X,
   Zap,
 } from 'lucide-react-native';
 
@@ -60,7 +61,8 @@ export type IconName =
   | 'activity'
   | 'dumbbell'
   | 'coffee'
-  | 'trophy';
+  | 'trophy'
+  | 'x';
 
 interface IconProps {
   name: IconName;
@@ -99,6 +101,7 @@ const ICON_MAP: Record<IconName, LucideIcon> = {
   'dumbbell': Dumbbell,
   'coffee': Coffee,
   'trophy': Trophy,
+  'x': X,
 };
 
 export const Icon: React.FC<IconProps> = ({

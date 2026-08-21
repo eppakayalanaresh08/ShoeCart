@@ -65,7 +65,7 @@ export const UserCartScreen: React.FC = () => {
   if (cart.length === 0) {
     return (
       <View style={styles.emptyCartContainer}>
-        <Text style={styles.emptyCartIcon}>🛒</Text>
+        <Text style={styles.emptyCartIcon}>ðŸ›’</Text>
         <Text style={styles.emptyCartTitle}>Your Cart is Empty</Text>
         <Text style={styles.emptyCartSub}>
           Looks like you haven't added any shoes to your cart yet.
@@ -81,7 +81,7 @@ export const UserCartScreen: React.FC = () => {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.screenTitle}>My Cart</Text>
+      {/* <Text style={styles.screenTitle}>My Cart</Text> */}
 
       {/* Cart Items List */}
       <View style={styles.itemsList}>
@@ -103,7 +103,7 @@ export const UserCartScreen: React.FC = () => {
                 style={styles.trashBtn}
                 onPress={() => removeFromCart(item.id)}
               >
-                <Text style={styles.trashIcon}>🗑️</Text>
+                <Icon name="x" size={14} color="#6B7280" />
               </TouchableOpacity>
 
               <QuantityPicker
@@ -317,10 +317,13 @@ const styles = StyleSheet.create({
     height: 65,
   },
   trashBtn: {
-    padding: 4,
-  },
-  trashIcon: {
-    fontSize: 14,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    marginTop: -15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F3F4F6',
   },
   promoCard: {
     backgroundColor: '#FFFFFF',

@@ -1,107 +1,272 @@
-# ShoeCart - Production-Level React Native Application
+# ShoeCart
 
-![ShoeCart Banner](https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=1200&q=80)
+ShoeCart is a React Native shopping app with two role-based experiences:
 
-**ShoeCart** is a modern, full-featured React Native application built for both **Admin** and **End-User** e-commerce workflows. Designed with responsive aesthetics, local data persistence via `AsyncStorage`, functional components, unit tests, and cross-platform web support.
+## Customer Images
 
----
+![Customer 1](/screenimageassets/Splashscreen.jpeg)
 
-## 🌟 Key Features
+![Customer 2](/screenimageassets/onboarding1.jpeg)
 
-### 👑 Admin App Mode
-- **Dashboard Overview**: Metrics cards (Total Sales, Total Orders, Customers, Products) + Visual SVG Sales Trend Chart + Recent Orders summary.
-- **Manage Shoes**: Searchable inventory list with brand filters, stock status badges (In Stock, Low Stock, Out of Stock), and quick edit/delete controls.
-- **Add / Edit Shoe**: Form with image URL selection & presets, brand, name, price, description, multi-select shoe sizes (7–12), and stock status selector.
-- **All Orders Table**: View all store orders with status filter pills (All, Processing, Shipped, Delivered, Cancelled) and inline status drop-down updater.
-- **Order Details View**: Comprehensive breakdown of order items, customer info, shipping address, size/quantity specifications, and total summary.
-- **Customers**: Directory of store customers with avatars, contact information, total order count, and total spend metrics.
+![Customer 3](/screenimageassets/onboarding2.jpeg)
 
-### 👤 User App Mode
-- **Home / Shop Screen**: Greeting banner, search bar, hero promo banner ("AIR JORDAN 1"), category pills, brand filter logos, and Top Picks product grid.
-- **Categories Screen**: Visual category cards (Running, Lifestyle, Basketball, Training, Casual, Sports) and promotional discount banner ("SALE Up to 40% Off").
-- **Product Details Screen**: Product image gallery, rating scores, price, description, interactive size chips (US 7–12), Add to Cart, Buy Now, and Wishlist toggle.
-- **Cart Management**: Cart items list with image thumbnails, selected size, `+` / `-` quantity controls, item removal, promo code engine (`SNEAKER10` for 10% off), subtotal, shipping calculation, and Checkout modal.
-- **My Orders**: View user's placed order history in card/table layout with status filtering.
-- **Profile Screen**: User avatar, saved wishlist count, order count summary, data reset button, and quick Role Switcher toggle button.
+![Customer 4](/screenimageassets/onboarding3.jpeg)
 
----
+![Customer 5](/screenimageassets/user/customerlogin.jpeg)
 
-## 🏗️ Architecture & Best Practices
+![Customer 6](/screenimageassets/user/Home.jpeg)
 
-```
+![Customer 7](/screenimageassets/user/Category.jpeg)
+
+![Customer 8](/screenimageassets/user/Cart.jpeg)
+
+![Customer 9](/screenimageassets/user/productsDetails.jpeg)
+
+![Customer 10](/screenimageassets/user/address.jpeg)
+
+![Customer 11](/screenimageassets/user/Mycart.jpeg)
+
+![Customer 12](/screenimageassets/user/myorder.jpeg)
+
+![Customer 13](/screenimageassets/user/Myorders.jpeg)
+
+![Customer 14](/screenimageassets/user/userprofile.jpeg)
+
+## Admin Images
+
+![Admin 1](/screenimageassets/admin/adminlogin.jpeg)
+
+![Admin 2](/screenimageassets/admin/homeadmin.jpeg)
+
+![Admin 3](/screenimageassets/admin/manageshoe.jpeg)
+
+![Admin 4](/screenimageassets/admin/addproduct.jpeg)
+
+![Admin 5](/screenimageassets/admin/adminprofile.jpeg)
+
+![Admin 6](/screenimageassets/admin/allorders.jpeg)
+
+![Admin 7](/screenimageassets/admin/customers.jpeg)
+
+
+
+- `Admin` mode for product and order management
+- `User` mode for browsing, cart, checkout, and profile flows
+
+The project uses local mock data plus `AsyncStorage` persistence, so it behaves like a small real app without requiring a backend.
+
+## What This App Includes
+
+### Admin features
+
+- Dashboard with sales and order summary
+- Shoe inventory management
+- Add / edit shoe form
+- Real image selection from camera or gallery in the admin shoe form
+- Order list and order details
+- Customer list
+- Admin profile screen
+
+### User features
+
+- Onboarding flow
+- Role-based login screen
+- Home storefront
+- Categories page
+- Product details page
+- Cart with quantity updates
+- Promo code flow
+- Orders page
+- User profile page
+
+## Default Behavior
+
+This project is currently designed with a local-first approach.
+
+- App data starts from mock data in `src/data/initialData.ts`
+- App state is managed through `src/context/AppContext.tsx`
+- User session, role, and onboarding state are stored with `AsyncStorage`
+- If onboarding is not completed, the app opens onboarding first
+- After login:
+  - `Admin` goes to `dashboard`
+  - `User` goes to `home`
+- If no backend is connected, the app still works with local mock data
+
+## Project Approach
+
+The current implementation follows this approach:
+
+- Build UI screens first for both admin and user flows
+- Keep reusable UI inside shared components
+- Use a simple context-based state layer instead of a heavier store
+- Keep the project easy to run without API setup
+- Use role-based theming:
+  - `Admin` theme is purple-based
+  - `User` theme is pink/red-based
+
+## Folder Structure
+
+```text
 ShoeCart/
-├── __tests__/                  # Jest unit tests (AppContext & App render)
-├── __mocks__/                  # Mocks for AsyncStorage & Native Modules
+├── android/                        # Android native project
+├── ios/                            # iOS native project
 ├── src/
-│   ├── types/                  # TypeScript interface definitions (Shoe, Order, CartItem, Customer)
-│   ├── data/                   # Realistic initial mock datasets
-│   ├── context/                # AppContext (Redux/AsyncStorage persistence layer)
-│   ├── theme/                  # Design tokens & color palettes for Admin (Purple) & User (Red)
+│   ├── assets/                     # Local app assets
+│   │   ├── appicon.png             # App icon source
+│   │   ├── onboarding1.png         # Onboarding image 1
+│   │   ├── onboarding2.png         # Onboarding image 2
+│   │   └── onboarding3.png         # Onboarding image 3
 │   ├── components/
-│   │   ├── common/             # Reusable UI (Header, Button, Badge, Input, Modal, SalesChart, OrderTable)
-│   │   └── shoe/               # ShoeCard, SizeSelector, QuantityPicker
+│   │   ├── common/                 # Shared UI components
+│   │   └── shoe/                   # Shoe-specific reusable UI
+│   ├── context/
+│   │   └── AppContext.tsx          # App state and persistence
+│   ├── data/
+│   │   └── initialData.ts          # Default mock shoes, orders, customers, categories
 │   ├── features/
-│   │   ├── admin/              # Admin feature screens (Dashboard, ManageShoes, AddEditShoe, AllOrders, Customers)
-│   │   └── user/               # User feature screens (Home, Categories, ProductDetails, Cart, MyOrders, Profile)
-│   ├── navigation/             # AppNavigator & Role Switcher
-│   └── index.web.tsx           # React Native Web entry point
-├── App.tsx                     # Main App component
-├── vite.config.ts              # Vite web bundler config with react-native-web alias
-├── README.md                   # Application setup & documentation
-└── FUTURE_IMPROVEMENTS.md      # Detailed future production roadmap
+│   │   ├── admin/
+│   │   │   └── screens/            # Admin screens
+│   │   ├── auth/
+│   │   │   └── screens/            # Onboarding and login screens
+│   │   └── user/
+│   │       └── screens/            # User screens
+│   ├── navigation/
+│   │   └── AppNavigator.tsx        # Role-based screen rendering and tabs
+│   ├── theme/
+│   │   └── colors.ts               # Admin and user theme colors
+│   └── types/
+│       └── index.ts                # Shared TypeScript types
+├── App.tsx                         # Main app entry
+├── package.json                    # Dependencies and scripts
+└── README.md                       # Project documentation
 ```
 
----
+## Image Paths Used In This Project
 
-## 🚀 Getting Started & Installation
+### Local image assets
 
-### Prerequisites
-- Node.js >= 18.0.0
-- npm >= 9.0.0 or yarn
+- App icon source:
+  - `src/assets/appicon.png`
+- Onboarding images:
+  - `src/assets/onboarding1.png`
+  - `src/assets/onboarding2.png`
+  - `src/assets/onboarding3.png`
 
-### 1. Installation
-Clone the repository and install dependencies:
+### Admin image-related paths
+
+- Admin add/edit shoe screen:
+  - `src/features/admin/screens/AddEditShoeScreen.tsx`
+- Admin customer avatars shown in customer list:
+  - `src/features/admin/screens/AdminCustomersScreen.tsx`
+- Admin order item images:
+  - `src/features/admin/screens/AdminOrderDetailsScreen.tsx`
+- Admin profile image source comes from current user data:
+  - `src/features/admin/screens/AdminProfileScreen.tsx`
+
+### User image-related paths
+
+- User home/product cards:
+  - `src/components/shoe/ShoeCard.tsx`
+- User product details image:
+  - `src/features/user/screens/ProductDetailsScreen.tsx`
+- User cart item images:
+  - `src/features/user/screens/UserCartScreen.tsx`
+- User category images:
+  - `src/features/user/screens/UserCategoriesScreen.tsx`
+- User profile avatar choices:
+  - `src/features/user/screens/UserProfileScreen.tsx`
+
+### Default mock image source paths
+
+Most default product and customer images currently come from `src/data/initialData.ts`.
+
+- Product shoe images:
+  - `INITIAL_SHOES`
+- Order item images:
+  - `INITIAL_ORDERS`
+- Customer avatar images:
+  - `INITIAL_CUSTOMERS`
+- Category images:
+  - `INITIAL_CATEGORIES`
+
+### Current user avatar path
+
+The logged-in user avatar is set in:
+
+- `src/context/AppContext.tsx`
+
+This file decides the default avatar URL for admin and user login sessions.
+
+## Important Screens
+
+### Auth
+
+- `src/features/auth/screens/OnboardingScreen.tsx`
+- `src/features/auth/screens/LoginScreen.tsx`
+
+### Admin
+
+- `src/features/admin/screens/AdminDashboardScreen.tsx`
+- `src/features/admin/screens/ManageShoesScreen.tsx`
+- `src/features/admin/screens/AddEditShoeScreen.tsx`
+- `src/features/admin/screens/AdminOrdersScreen.tsx`
+- `src/features/admin/screens/AdminOrderDetailsScreen.tsx`
+- `src/features/admin/screens/AdminCustomersScreen.tsx`
+- `src/features/admin/screens/AdminProfileScreen.tsx`
+
+### User
+
+- `src/features/user/screens/UserHomeScreen.tsx`
+- `src/features/user/screens/UserCategoriesScreen.tsx`
+- `src/features/user/screens/ProductDetailsScreen.tsx`
+- `src/features/user/screens/UserCartScreen.tsx`
+- `src/features/user/screens/UserOrdersScreen.tsx`
+- `src/features/user/screens/UserProfileScreen.tsx`
+
+## Theme and Role Styling
+
+- Theme colors are defined in `src/theme/colors.ts`
+- `Admin` uses purple/violet styling
+- `User` uses pink/red styling
+- Login screen switches top branding colors based on the selected role
+
+## Running The Project
+
+### Install
+
 ```bash
-git clone <repository-url>
-cd ShoeCart
 npm install
 ```
 
-### 2. Running Web Preview (Instant Browser Demo)
-To start the Vite web dev server:
-```bash
-npm run dev
-```
-Open `http://localhost:3000/` or `http://localhost:3001/` in your browser.
+### Start Metro
 
-### 3. Running Mobile (React Native Android / iOS)
-
-#### Android:
-Ensure Android Studio and an Android Virtual Device (AVD) are running:
 ```bash
 npm run start
-# In a separate terminal tab:
+```
+
+### Run Android
+
+```bash
 npm run android
 ```
 
-#### iOS (macOS only):
+### Run iOS
+
 ```bash
-cd ios && pod install && cd ..
+cd ios
+pod install
+cd ..
 npm run ios
 ```
 
----
+### Run tests
 
-## 🧪 Running Unit Tests
-
-Run the test suite using Jest:
 ```bash
 npm test
 ```
-All unit tests cover state management, cart total calculations, promo code discounts, order placement, and component rendering.
 
----
+## Notes
 
-## 📑 Additional Documentation
-
-For details on proposed future enhancements (Backend integration, Stripe payment gateway, push notifications, and CI/CD), please see [`FUTURE_IMPROVEMENTS.md`](./FUTURE_IMPROVEMENTS.md).
+- Admin shoe creation now supports camera and gallery image picking
+- If you want permanent uploaded image storage across devices, a backend or file upload service will be needed later
+- Right now the project is best for UI, flow, and local-state demonstration
