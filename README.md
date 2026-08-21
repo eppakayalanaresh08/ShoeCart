@@ -1,46 +1,111 @@
 # ShoeCart
 
 ShoeCart is a React Native shopping app with two role-based experiences:
-
-## Customer Images
+## Customer Screens
 
 <table>
   <tr>
-    <td><img src="/screenimageassets/Splashscreen.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/onboarding1.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/onboarding2.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/onboarding3.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/user/customerlogin.jpeg" width="180"/></td>
+    <td align="center">
+      <img src="/screenimageassets/Splashscreen.jpeg" width="180"/><br/>
+      <b>Splash Screen</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/onboarding1.jpeg" width="180"/><br/>
+      <b>Onboarding 1</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/onboarding2.jpeg" width="180"/><br/>
+      <b>Onboarding 2</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/onboarding3.jpeg" width="180"/><br/>
+      <b>Onboarding 3</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/user/customerlogin.jpeg" width="180"/><br/>
+      <b>User Login</b>
+    </td>
   </tr>
+
   <tr>
-    <td><img src="/screenimageassets/user/Home.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/user/Category.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/user/Cart.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/user/productsDetails.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/user/address.jpeg" width="180"/></td>
+    <td align="center">
+      <img src="/screenimageassets/user/Home.jpeg" width="180"/><br/>
+      <b>Home</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/user/Category.jpeg" width="180"/><br/>
+      <b>Categories</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/user/Cart.jpeg" width="180"/><br/>
+      <b>Cart</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/user/productsDetails.jpeg" width="180"/><br/>
+      <b>Product Details</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/user/address.jpeg" width="180"/><br/>
+      <b>Address</b>
+    </td>
   </tr>
+
   <tr>
-    <td><img src="/screenimageassets/user/Mycart.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/user/myorder.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/user/Myorders.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/user/userprofile.jpeg" width="180"/></td>
+    <td align="center">
+      <img src="/screenimageassets/user/Mycart.jpeg" width="180"/><br/>
+      <b>My Cart</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/user/myorder.jpeg" width="180"/><br/>
+      <b>Order</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/user/Myorders.jpeg" width="180"/><br/>
+      <b>My Orders</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/user/userprofile.jpeg" width="180"/><br/>
+      <b>User Profile</b>
+    </td>
     <td></td>
   </tr>
 </table>
 
-## Admin Images
+## Admin Screens
 
 <table>
   <tr>
-    <td><img src="/screenimageassets/admin/adminlogin.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/admin/homeadmin.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/admin/manageshoe.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/admin/addproduct.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/admin/adminprofile.jpeg" width="180"/></td>
+    <td align="center">
+      <img src="/screenimageassets/admin/adminlogin.jpeg" width="180"/><br/>
+      <b>Admin Login</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/admin/homeadmin.jpeg" width="180"/><br/>
+      <b>Admin Dashboard</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/admin/manageshoe.jpeg" width="180"/><br/>
+      <b>Manage Shoes</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/admin/addproduct.jpeg" width="180"/><br/>
+      <b>Add Product</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/admin/adminprofile.jpeg" width="180"/><br/>
+      <b>Admin Profile</b>
+    </td>
   </tr>
+
   <tr>
-    <td><img src="/screenimageassets/admin/allorders.jpeg" width="180"/></td>
-    <td><img src="/screenimageassets/admin/customers.jpeg" width="180"/></td>
+    <td align="center">
+      <img src="/screenimageassets/admin/allorders.jpeg" width="180"/><br/>
+      <b>All Orders</b>
+    </td>
+    <td align="center">
+      <img src="/screenimageassets/admin/customers.jpeg" width="180"/><br/>
+      <b>Customers</b>
+    </td>
     <td></td>
     <td></td>
     <td></td>
