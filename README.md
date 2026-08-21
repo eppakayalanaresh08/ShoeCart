@@ -4,51 +4,48 @@ ShoeCart is a React Native shopping app with two role-based experiences:
 
 ## Customer Images
 
-![Customer 1](/screenimageassets/Splashscreen.jpeg)
-
-![Customer 2](/screenimageassets/onboarding1.jpeg)
-
-![Customer 3](/screenimageassets/onboarding2.jpeg)
-
-![Customer 4](/screenimageassets/onboarding3.jpeg)
-
-![Customer 5](/screenimageassets/user/customerlogin.jpeg)
-
-![Customer 6](/screenimageassets/user/Home.jpeg)
-
-![Customer 7](/screenimageassets/user/Category.jpeg)
-
-![Customer 8](/screenimageassets/user/Cart.jpeg)
-
-![Customer 9](/screenimageassets/user/productsDetails.jpeg)
-
-![Customer 10](/screenimageassets/user/address.jpeg)
-
-![Customer 11](/screenimageassets/user/Mycart.jpeg)
-
-![Customer 12](/screenimageassets/user/myorder.jpeg)
-
-![Customer 13](/screenimageassets/user/Myorders.jpeg)
-
-![Customer 14](/screenimageassets/user/userprofile.jpeg)
+<table>
+  <tr>
+    <td><img src="/screenimageassets/Splashscreen.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/onboarding1.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/onboarding2.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/onboarding3.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/user/customerlogin.jpeg" width="180"/></td>
+  </tr>
+  <tr>
+    <td><img src="/screenimageassets/user/Home.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/user/Category.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/user/Cart.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/user/productsDetails.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/user/address.jpeg" width="180"/></td>
+  </tr>
+  <tr>
+    <td><img src="/screenimageassets/user/Mycart.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/user/myorder.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/user/Myorders.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/user/userprofile.jpeg" width="180"/></td>
+    <td></td>
+  </tr>
+</table>
 
 ## Admin Images
 
-![Admin 1](/screenimageassets/admin/adminlogin.jpeg)
-
-![Admin 2](/screenimageassets/admin/homeadmin.jpeg)
-
-![Admin 3](/screenimageassets/admin/manageshoe.jpeg)
-
-![Admin 4](/screenimageassets/admin/addproduct.jpeg)
-
-![Admin 5](/screenimageassets/admin/adminprofile.jpeg)
-
-![Admin 6](/screenimageassets/admin/allorders.jpeg)
-
-![Admin 7](/screenimageassets/admin/customers.jpeg)
-
-
+<table>
+  <tr>
+    <td><img src="/screenimageassets/admin/adminlogin.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/admin/homeadmin.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/admin/manageshoe.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/admin/addproduct.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/admin/adminprofile.jpeg" width="180"/></td>
+  </tr>
+  <tr>
+    <td><img src="/screenimageassets/admin/allorders.jpeg" width="180"/></td>
+    <td><img src="/screenimageassets/admin/customers.jpeg" width="180"/></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
 
 - `Admin` mode for product and order management
 - `User` mode for browsing, cart, checkout, and profile flows
